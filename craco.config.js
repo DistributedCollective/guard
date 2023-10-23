@@ -18,17 +18,18 @@ module.exports = {
       //   /Configure maximumFileSizeToCacheInBytes to change this limit/,
       // ];
       config.resolve.fallback = {
-        stream: false,
-        crypto: false,
-        buffer: false,
-        assert: false,
-        // stream: require.resolve('stream-browserify'),
-        // crypto: require.resolve('crypto-browserify'),
-        // buffer: require.resolve('buffer'),
-        // assert: require.resolve('assert/'),
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+        assert: require.resolve('assert'),
+        http: require.resolve('stream-http'),
+        https: require.resolve('https-browserify'),
+        os: require.resolve('os-browserify'),
+        url: require.resolve('url'),
+        zlib: false,
       };
       config.plugins = (config.plugins || []).concat([
         new webpack.ProvidePlugin({
+          process: 'process/browser',
           Buffer: ['buffer', 'Buffer'],
         }),
       ]);

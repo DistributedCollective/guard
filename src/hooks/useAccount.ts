@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { startWith } from "rxjs";
 import { onboard } from "../config/network";
+import { ethers } from "ethers";
 
 export const useAccount = () => {
   const [account, setAccount] = useState<string | null>(null);
@@ -17,9 +18,19 @@ export const useAccount = () => {
     });
   }, []);
 
+  const provider = useMemo(
+    () =>
+      onboard.state.get().wallets[0]?.provider
+        ? new ethers.providers.Web3Provider(onboard.state.get().wallets[0]?.provider)
+        : undefined,
+    [],
+  );
+  const signer = useMemo(() => provider?.getSigner(), [provider]);
+
   return {
     account,
-    provider: onboard.state.get().wallets[0]?.provider || null,
+    provider,
+    signer,
     connect,
   }
 };

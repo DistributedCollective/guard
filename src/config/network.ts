@@ -2,7 +2,7 @@ import Onboard from '@sovryn/onboard-core';
 import injectedModule from '@sovryn/onboard-injected';
 import setup, { Chain, ChainIds } from '@sovryn/ethers-provider';
 
-export const CHAIN_ID = '0x' + Number(parseInt(process.env.REACT_APP_CHAIN_ID || '30')).toString(16);
+export const CHAIN_ID: string = '0x' + Number(parseInt(process.env.REACT_APP_CHAIN_ID || '30')).toString(16);
 
 export const IS_MAINNET = CHAIN_ID === ChainIds.RSK_MAINNET;
 
