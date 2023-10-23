@@ -6,28 +6,28 @@
   "dependencies": {
     "@sovryn/ethers-provider": "1.0.2",
     "@sovryn/onboard-common": "1.0.0",
-    "@sovryn/onboard-core": "1.0.2",
+    "@sovryn/onboard-core": "1.0.5",
     "@sovryn/onboard-injected": "1.0.2",
+    "@sovryn/onboard-react": "1.0.11",
     "@sovryn/ui": "1.0.16",
     "@testing-library/jest-dom": "5.14.1",
     "@testing-library/react": "13.0.0",
     "@testing-library/user-event": "13.2.1",
     "@types/jest": "27.0.1",
-    "@types/node": "16.7.13",
-    "@types/react": "18.0.0",
-    "@types/react-dom": "18.0.0",
-    "ethers": "6.8.0",
+    "@types/node": "18.16.1",
+    "@types/react": "18.2.25",
+    "@types/react-dom": "18.2.14",
+    "ethers": "5.7.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-scripts": "5.0.1",
-    "typescript": "4.4.2",
+    "typescript": "5.2.2",
     "web-vitals": "2.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "craco start",
+    "build": "craco build",
+    "test": "craco test --watchAll=false --passWithNoTests"
   },
   "eslintConfig": {
     "extends": [
@@ -46,5 +46,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "7.23.2",
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
+    "@babel/preset-react": "7.22.15",
+    "@craco/craco": "7.1.0",
+    "assert": "2.1.0",
+    "browser-buffer": "0.0.1-1",
+    "crypto-browserify": "3.12.0",
+    "stream-browserify": "3.0.0",
+    "ts-loader": "9.5.0",
+    "webpack": "5.89.0"
   }
 }
