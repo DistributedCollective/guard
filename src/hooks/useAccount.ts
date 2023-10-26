@@ -1,36 +1,33 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { startWith } from "rxjs";
 import { onboard } from "../config/network";
 import { ethers } from "ethers";
+import { state } from "../state/shared";
 
 export const useAccount = () => {
-  const [account, setAccount] = useState<string | null>(null);
+  const [value, setValue] = useState(state.get().wallet);
 
   const connect = useCallback(() => onboard.connectWallet(), []);
   
   useEffect(() => {
-    onboard.state.select('wallets').pipe(startWith(onboard.state.get().wallets)).subscribe((wallets) => {
+    const sub = onboard.state.select('wallets').pipe(startWith(onboard.state.get().wallets)).subscribe((wallets) => {
       if (wallets.length) {
-        setAccount(wallets[0].accounts[0].address);
+        const provider = new ethers.providers.Web3Provider(onboard.state.get().wallets[0]?.provider);
+        state.actions.connectWallet(wallets[0].accounts[0].address, provider.getSigner());
       } else {
-        setAccount(null);
+        state.actions.disconnectWallet();
       }
     });
+    return () => sub.unsubscribe();
   }, []);
 
-  const provider = useMemo(
-    () =>
-      onboard.state.get().wallets[0]?.provider
-        ? new ethers.providers.Web3Provider(onboard.state.get().wallets[0]?.provider)
-        : undefined,
-    [],
-  );
-  const signer = useMemo(() => provider?.getSigner(), [provider]);
+  useEffect(() => {
+    const sub = state.select('wallet').subscribe(setValue);
+    return () => sub.unsubscribe();
+  }, []);
 
   return {
-    account,
-    provider,
-    signer,
+    ...value,
     connect,
   }
 };

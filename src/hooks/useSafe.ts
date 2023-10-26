@@ -1,57 +1,46 @@
 import Safe from "@safe-global/safe-core-sdk";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ethers } from "ethers";
-import { safeContracts, contractNetworks } from "../config/safe";
-import { CHAIN_ID } from "../config/network";
+import { useCallback, useEffect, useState } from "react";
+import { Signer, ethers } from "ethers";
 import { getProvider } from "@sovryn/ethers-provider";
 import EthersAdapter from "@safe-global/safe-ethers-lib"
-import { useAccount } from "./useAccount";
+import { safeContracts, contractNetworks } from "../config/safe";
+import { CHAIN_ID } from "../config/network";
+import { state } from "../state/shared";
 
 export const useSafe = () => {
+  const [value, setValue] = useState(state.get().safe);
 
-  const { signer } = useAccount();
+  const makeAdapter = useCallback((signerOrProvider: Signer | ethers.providers.Provider) => new EthersAdapter({
+    // @ts-ignore
+    ethers,
+    signerOrProvider,
+  }), []);
 
-  const sdk = useRef<Safe>();
-  const [connected, setConnected] = useState(false);
-
-  useEffect(() => {
-
-    const ethAdapter = new EthersAdapter({
-      // @ts-ignore
-      ethers,
-      safeContracts,
-      signerOrProvider: getProvider(CHAIN_ID),
-    });
-
+  const init = useCallback(async () => {
     Safe.create({
       safeAddress: (safeContracts as any)[CHAIN_ID],
       contractNetworks,
-      ethAdapter,
+      ethAdapter: makeAdapter(getProvider(CHAIN_ID)),
     }).then((safe) => {
-      sdk.current = safe;
-      setConnected(true);
       console.log('Safe SDK initialized', safe);
+      state.actions.connectSdk(safe);
+      Promise.all([
+        safe.getOwners().then(state.actions.saveOwners),
+        safe.getThreshold().then(state.actions.saveThreshold),
+      ]);
     }).catch((e) => {
       console.error('Failed to initialize Safe SDK', e);
-      setConnected(false);
+      state.actions.disconnectSdk(e.toString());
     });
+  }, [makeAdapter])
 
+  useEffect(() => {
+    const sub = state.select('safe').subscribe(setValue);
+    return () => sub.unsubscribe();
   }, []);
 
-  const connect = useCallback(async () => {
-    if (signer) {
-      // @ts-ignore
-      const safe = await sdk.current?.connect({ ethAdapter: new EthersAdapter({ ethers, signerOrProvider: signer }) });
-      console.log('Safe SDK connected', safe);
-      return safe as Safe;
-    }
-    return sdk.current as Safe;
-  }, [signer]);
-
   return {
-    sdk: sdk.current,
-    connected,
-    connect,
+    init,
+    ...value,
   };
-
 };
