@@ -1,10 +1,6 @@
-import Safe from "@safe-global/safe-core-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { Signer, ethers } from "ethers";
-import { getProvider } from "@sovryn/ethers-provider";
 import EthersAdapter from "@safe-global/safe-ethers-lib"
-import { safeContracts, contractNetworks } from "../config/safe";
-import { CHAIN_ID } from "../config/network";
 import { state } from "../state/shared";
 
 export const useSigner = () => {

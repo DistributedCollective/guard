@@ -4,8 +4,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import './index.css';
 import { Root } from './routes/Root';
-import { OnboardProvider } from '@sovryn/onboard-react';
 import { App } from './App';
+import { Proposal } from './routes/Proposal';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,11 +18,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: 'Home'
+        element: <Proposal />
       },
       {
-        path: "/contacts/:id",
-        element: <div>Contacts</div>,
+        path: "/approve",
+        element: <div>Approve</div>,
       },
     ],
   },

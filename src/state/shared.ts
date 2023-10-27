@@ -9,11 +9,15 @@ import {
   filter,
   startWith,
 } from 'rxjs';
+import { toPausedState } from '../utils';
+import { PAUSER_METHODS } from '../config/pauser';
 
 export type SharedState = {
   wallet: WalletState;
   safe: SafeState;
   safeSigner: SafeSignerState;
+  pauser: InitialPauserState;
+  proposal: PausedState[];
 };
 
 export type WalletState = {
@@ -32,6 +36,19 @@ export type SafeState = {
 
 export type SafeSignerState = SafeState & {
   account: string | null;
+};
+
+export type PausedState = {
+  group: string;
+  method: string;
+  value: boolean;
+};
+
+export type InitialPauserState = {
+  methods: PausedState[];
+  loading: boolean;
+  loaded: boolean;
+  error?: string;
 };
 
 const INITIAL_STATE: SharedState = {
@@ -53,6 +70,12 @@ const INITIAL_STATE: SharedState = {
     owners: [],
     threshold: 0,
   },
+  pauser: {
+    methods: toPausedState(PAUSER_METHODS),
+    loaded: false,
+    loading: true,
+  },
+  proposal: toPausedState(PAUSER_METHODS),
 };
 
 const store = new BehaviorSubject<SharedState>(INITIAL_STATE);
@@ -138,6 +161,29 @@ const disconnectSignerSdk = (sdk: Safe, account: string) => dispatch(state => pr
   draft.safeSigner.error = undefined;
 }));
 
+const initPauserValues = (items: PausedState[]) => dispatch(state => produce(state, draft => {
+  draft.pauser.methods = items;
+  draft.proposal = items;
+  draft.pauser.loaded = true;
+  draft.pauser.loading = false;
+}));
+
+const failPauserValues = (error: string) => dispatch(state => produce(state, draft => {
+  draft.pauser.methods = INITIAL_STATE.pauser.methods;
+  draft.pauser.loaded = false;
+  draft.pauser.loading = false;
+  draft.pauser.error = error;
+}));
+
+const setProposalValue = (group: string, method: string, value: boolean) => dispatch(state => produce(state, draft => {
+  const index = draft.proposal.findIndex(p => p.group === group && p.method === method);
+  if (index === -1) {
+    draft.proposal.push({ group, method, value });
+    return;
+  }
+  draft.proposal[index].value = value;
+}));
+
 export const state = {
   get,
   select,
@@ -150,5 +196,8 @@ export const state = {
     saveThreshold,
     connectSignerSdk,
     disconnectSignerSdk,
+    initPauserValues,
+    failPauserValues,
+    setProposalValue,
   },
 };
