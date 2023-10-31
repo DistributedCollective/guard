@@ -24,6 +24,6 @@ export const contractNetworks: ContractNetworksConfig = {
 
 export const safeContracts: Partial<Record<ChainIds, string>> = {
   [ChainIds.RSK_MAINNET]: '0xdd8e07a57560ada0a2d84a96c457a5e6ddd488b7',
-  // [ChainIds.RSK_TESTNET]: '0x92ad69a1adab3b2d67a18c17b517b73dd961dd5a', // testnet guardian safe
-  [ChainIds.RSK_TESTNET]: '0x5dbdc2260760188630a376d4ed20b952339806f1', // victor test safe
+  [ChainIds.RSK_TESTNET]: '0x92ad69a1adab3b2d67a18c17b517b73dd961dd5a', // testnet guardian safe
+  // [ChainIds.RSK_TESTNET]: '0x5dbdc2260760188630a376d4ed20b952339806f1', // victor test safe
 };

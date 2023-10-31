@@ -6,7 +6,7 @@ import { useSafe } from './hooks/useSafe';
 import { OnboardProvider } from '@sovryn/onboard-react';
 
 export const App: FC<PropsWithChildren> = ({ children }) => {
-  const { init, ready } = useSafe();
+  const { init, ready, owners } = useSafe();
   const { address, connect } = useAccount();
 
   useEffect(() => {
@@ -20,6 +20,7 @@ export const App: FC<PropsWithChildren> = ({ children }) => {
       </div>
       {address ? (<>
         <p>Account: {address}</p>
+        {owners.length > 0 && <p>Owners: {owners.join(', ')}</p>}
         {ready ? (<>{children}</>) : (<>Loading safe data...</>)}
       </>) : (<Button text="Connect" onClick={connect} />)}
       <OnboardProvider />

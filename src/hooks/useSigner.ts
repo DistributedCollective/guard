@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Signer, ethers } from "ethers";
 import EthersAdapter from "@safe-global/safe-ethers-lib"
 import { state } from "../state/shared";
+import { MetaTransactionData, SafeTransactionDataPartial, SafeTransaction } from '@safe-global/safe-core-sdk-types';
 
 export const useSigner = () => {
   const [value, setValue] = useState(state.get().safeSigner);
@@ -28,88 +29,59 @@ export const useSigner = () => {
     if (state.get().wallet.address?.toLowerCase() === account?.toLowerCase()) {
       const safe = await sdk.connect({ ethAdapter: makeAdapter(signer!) });
       state.actions.connectSignerSdk(safe, account!);
+      return safe;
     }
-    
+
+    return state.get().safeSigner.sdk;
   }, [makeAdapter]);
 
-  // const makeSigner = useCallback(async () => {
-  //   if (signer && sdk.current) {
-  //     const safe = await sdk.current.connect({ ethAdapter: makeAdapter(signer) });
-  //     setConnected(true);
-  //     return safe as Safe;
-  //   }
-  // }, [makeAdapter, signer]);
+  const submitTransaction = useCallback(async (data: SafeTransactionDataPartial | MetaTransactionData[], sign: boolean = true) => {
+    const sdk = await connect();
 
-  // useEffect(() => {
-  //   if (signer && sdk.current && ready) {
-  //     makeSigner();
-  //   }
-  // }, [signer, ready, makeSigner]);
+    if (!sdk) {
+      throw new Error('Safe SDK not initialized');
+    }
 
-//   const submitTransaction = useCallback(async () => {
+    let safeTransaction = await sdk.createTransaction({
+      safeTransactionData: data,
+    });
 
-//     if (!sdk.current) {
-//       throw new Error('Safe SDK not initialized');
-//     }
+    if (sign) {
+      safeTransaction = await sdk.signTransaction(safeTransaction);
+    }
 
-//     const signer = await makeSigner();
-//     if (!signer) {
-//       throw new Error('Failed to create signer');
-//     }
+    const txHash = await sdk.getTransactionHash(safeTransaction);
 
-//     const safeTransaction = await sdk.current.createTransaction({
-//       // todo: pass actual values
-//       safeTransactionData: {
-//         to: ethers.constants.AddressZero,
-//         value: '0',
-//         data: '0x',
-//       }
-//     });
+    return {
+      safeTransaction,
+      txHash,
+    };
 
-//     console.log('Transaction data', safeTransaction);
+  }, [connect]);
 
-//     const txHash = await sdk.current.getTransactionHash(safeTransaction);
+  const approveTransaction = useCallback(async (txHash: string) => {
+      const sdk = await connect();
 
-//     return {
-//       safeTransaction,
-//       txHash,
-//     };
-
-//   }, [makeSigner]);
-
-//   const approveTransaction = useCallback(async (txHash: string) => {
-//       if (!sdk.current) {
-//         throw new Error('Safe SDK not initialized');
-//       }
+      if (!sdk) {
+        throw new Error('Safe SDK not initialized');
+      }
   
-//       const signer = await makeSigner();
-//       if (!signer) {
-//         throw new Error('Failed to create signer');
-//       }
+      const safeTransaction = await sdk.approveTransactionHash(txHash);
   
-//       const safeTransaction = await signer.approveTransactionHash(txHash);
-  
-//       console.log('Transaction approved', safeTransaction);
-  
-//       return safeTransaction;
-//   }, [makeSigner]);
+      return safeTransaction;
+  }, [connect]);
 
-//   const executeTransaction = useCallback(async (safeTransaction: SafeTransaction) => {
-//     if (!sdk.current) {
-//       throw new Error('Safe SDK not initialized');
-//     }
+  const executeTransaction = useCallback(async (safeTransaction: SafeTransaction) => {
+    const sdk = await connect();
 
-//     const signer = await makeSigner();
-//     if (!signer) {
-//       throw new Error('Failed to create signer');
-//     }
+    if (!sdk) {
+      throw new Error('Safe SDK not initialized');
+    }
 
-//     const tx = await signer.executeTransaction(safeTransaction);
+    const tx = await sdk.executeTransaction(safeTransaction);
 
-//     console.log('Transaction executing', tx);
-
-//     return tx;
-// }, [makeSigner]);
+    return tx;
+}, [connect]);
 
   useEffect(() => {
     const sub = state.select('safeSigner').subscribe(setValue);
@@ -118,6 +90,9 @@ export const useSigner = () => {
 
   return {
     connect,
+    submitTransaction,
+    approveTransaction,
+    executeTransaction,
     ...value,
   };
 };

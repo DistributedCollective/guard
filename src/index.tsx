@@ -6,6 +6,7 @@ import './index.css';
 import { Root } from './routes/Root';
 import { App } from './App';
 import { Proposal } from './routes/Proposal';
+import { Sign } from './routes/Sign';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -21,8 +22,8 @@ const router = createBrowserRouter([
         element: <Proposal />
       },
       {
-        path: "/approve",
-        element: <div>Approve</div>,
+        path: "/sign",
+        element: <Sign />,
       },
     ],
   },

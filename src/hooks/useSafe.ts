@@ -22,7 +22,6 @@ export const useSafe = () => {
       contractNetworks,
       ethAdapter: makeAdapter(getProvider(CHAIN_ID)),
     }).then((safe) => {
-      console.log('Safe SDK initialized', safe);
       state.actions.connectSdk(safe);
       Promise.all([
         safe.getOwners().then(state.actions.saveOwners),

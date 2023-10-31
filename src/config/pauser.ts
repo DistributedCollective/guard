@@ -75,7 +75,7 @@ export const PAUSER_METHODS: PauserContract[] = [{
   methods: [{
     name: 'paused',
     read: 'paused',
-    toggle: 'pauseUnpause(bool)',
+    toggle: 'togglePaused(bool)',
     flag: true,
   }, {
     name: 'frozen',
@@ -176,5 +176,19 @@ export const PAUSER_METHODS: PauserContract[] = [{
     read: 'paused',
     toggle: 'pause',
     unpause: 'unpause',
+  }],
+}, {
+  group: 'SOV Token (test only)',
+  addresses: {
+    [ChainIds.RSK_TESTNET]: '0x6a9A07972D07e58F0daf5122d11E069288A375fb',
+    [ChainIds.RSK_MAINNET]: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
+  },
+  abi: [
+    'function symbol() view returns (string)',
+  ],
+  methods: [{
+    name: 'symbol',
+    read: 'symbol',
+    toggle: 'symbol()',
   }],
 }];

@@ -11,3 +11,12 @@ export const findChanged = (initial: PausedState[], current: PausedState[]): Pau
     return i !== item.value;
   });
 }
+
+
+export const downloadAsJson = (content: string, fileName: string = 'proposal.json') => {
+  var a = document.createElement("a");
+  var file = new Blob([content], {type: 'application/json'});
+  a.href = URL.createObjectURL(file);
+  a.download = fileName;
+  a.click();
+};

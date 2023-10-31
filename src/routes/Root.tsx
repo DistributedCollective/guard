@@ -1,10 +1,11 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 export const Root = () => {
   return (
     <>
       <div id="sidebar">
-        <h1>Sidebar</h1>
+        <Link to="/">Propose</Link>
+        <Link to="/sign">Sign</Link>
       </div>
       <div id="detail">
         <Outlet />
