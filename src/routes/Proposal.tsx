@@ -21,12 +21,12 @@ export const Proposal = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Propose</h1>
+    <>
+      <h1 className="mb-8">Build a transaction:</h1>
 
       {PAUSER_METHODS.map((method) => <PauserGroupCard key={method.group} group={method} />)}
 
       <ProposalBuilder />
-    </div>
+    </>
   );
 }

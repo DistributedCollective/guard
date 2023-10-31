@@ -3,8 +3,9 @@ import { SafeTransaction } from '@safe-global/safe-core-sdk-types';
 import { useSafe } from "../hooks/useSafe";
 import { useSigner } from "../hooks/useSigner";
 import SafeSignature from "@safe-global/safe-core-sdk/dist/src/utils/signatures/SafeSignature";
-import { Button, ButtonSize } from "@sovryn/ui";
+import { Button, ButtonSize, FormGroup, Input } from "@sovryn/ui";
 import EthSignSignature from "@safe-global/safe-core-sdk/dist/src/utils/signatures/SafeSignature";
+import { LinkAccountToExplorer, LinkHashToExplorer } from "../components/LinkToExplorer/LinkToExplorer";
 
 export const Sign = () => {
   const { sdk, threshold } = useSafe();
@@ -96,8 +97,19 @@ export const Sign = () => {
     }
   }, [executeTransaction, getApprovers, sdk, state]);
 
+  const data = useMemo(() => {
+    if (state) {
+      const signatures = Array.from(state.signatures.entries());
+  
+      return JSON.stringify({
+        data: state.data,
+        signatures,
+      }, null, 2);
+    } return '{}';
+  }, [state]);
+
   return (
-    <div>
+    <>
       <h1>Approve Proposal</h1>
 
       {preparing && (<p>Preparing....</p>)}
@@ -108,22 +120,33 @@ export const Sign = () => {
       </div>)}
 
       {state && (
-        <div>
-          <h2>Approve proposal ({signers.length}/{threshold})</h2>
-          <p>Proposal Hash: {hash}
-            {didUserSign && <em>You already signed.</em>}
+        <>
+          <FormGroup label="Transaction Hash" className="mt-4">
+            <Input readOnly value={hash} />
+          </FormGroup>
+          <FormGroup label="Transaction Content" className="mt-4 mb-4">
+            <Input readOnly value={data} />
+          </FormGroup>
+
+          {didUserSign && <p className="mb-3">You already signed.</p>}
+
+          <div className="mb-3">
             {canExecute ? (
               <Button onClick={handleExecute} text="Execute" loading={loading} disabled={loading || !canExecute} />
             ) : (
               <Button onClick={approveAndExecute ? handleExecute : handleApprove} text={!approveAndExecute ? 'Approve' : 'Approve & Execute'} loading={loading} disabled={loading || (!canExecute && didUserSign)} />
             )}
-          </p>
-          {txHash && <p>Transaction hash: {txHash}</p>}
-          <p>Signers: {signers.join(', ')}
-          <Button onClick={getApprovers} text="Refresh" loading={refreshing} disabled={refreshing} size={ButtonSize.small} />
-          </p>
-        </div>
+          </div>
+
+          {txHash && (
+            <p>Submitted txHash: <LinkHashToExplorer value={txHash} /></p>
+          )}
+
+          <h2>Signers ({signers.length} / {threshold})</h2>
+          {signers.map((signer) => <p key={signer}><LinkAccountToExplorer value={signer} /></p>)}
+          <Button onClick={getApprovers} text="Refresh signers" loading={refreshing} disabled={refreshing} size={ButtonSize.small} />
+        </>
       )}
-    </div>
+    </>
   );
 }

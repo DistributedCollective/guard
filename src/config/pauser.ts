@@ -177,18 +177,22 @@ export const PAUSER_METHODS: PauserContract[] = [{
     toggle: 'pause',
     unpause: 'unpause',
   }],
-}, {
-  group: 'SOV Token (test only)',
-  addresses: {
-    [ChainIds.RSK_TESTNET]: '0x6a9A07972D07e58F0daf5122d11E069288A375fb',
-    [ChainIds.RSK_MAINNET]: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
-  },
-  abi: [
-    'function symbol() view returns (string)',
-  ],
-  methods: [{
-    name: 'symbol',
-    read: 'symbol',
-    toggle: 'symbol()',
-  }],
 }];
+
+if (process.env.NODE_ENV === 'development') {
+  PAUSER_METHODS.push({
+    group: 'SOV Token (test only)',
+    addresses: {
+      [ChainIds.RSK_TESTNET]: '0x6a9A07972D07e58F0daf5122d11E069288A375fb',
+      [ChainIds.RSK_MAINNET]: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
+    },
+    abi: [
+      'function symbol() view returns (string)',
+    ],
+    methods: [{
+      name: 'symbol',
+      read: 'symbol',
+      toggle: 'symbol()',
+    }],
+  });
+}

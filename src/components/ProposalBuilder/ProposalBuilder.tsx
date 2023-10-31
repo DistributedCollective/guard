@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { PausedState, state } from "../../state/shared";
 import { downloadAsJson, findChanged } from "../../utils";
-import { Button } from "@sovryn/ui";
+import { Button, FormGroup, Input, Paragraph } from "@sovryn/ui";
 import { MetaTransactionData } from '@safe-global/safe-core-sdk-types';
 import { useSigner } from "../../hooks/useSigner";
 import { CONTRACTS } from "../../config/contracts";
@@ -26,6 +26,9 @@ const makeTransactionData = (group: string, method: string, value: boolean): Met
 
 export const ProposalBuilder = () => {
 
+
+  const [loading, setLoading] = useState(false);
+
   const [txData, setTxData] = useState<string>();
   const [txHash, setTxHash] = useState<string>();
 
@@ -49,28 +52,39 @@ export const ProposalBuilder = () => {
   }, [current, initial]);
 
   const handleSubmit = useCallback(async () => {
-    const value = await submitTransaction(changes.map(item => makeTransactionData(item.group, item.method, item.value)));
+    setLoading(true);
+    try {
+      const value = await submitTransaction(changes.map(item => makeTransactionData(item.group, item.method, item.value)));
 
-    const signatures = Array.from(value.safeTransaction.signatures.entries());
-
-    setTxData(JSON.stringify({
-      data: value.safeTransaction.data,
-      signatures,
-    }, null, 2));
-
-    setTxHash(value.txHash);
+      const signatures = Array.from(value.safeTransaction.signatures.entries());
+  
+      setTxData(JSON.stringify({
+        data: value.safeTransaction.data,
+        signatures,
+      }, null, 2));
+  
+      setTxHash(value.txHash);
+    } catch (e) {
+      alert((e as any).message);
+    } finally {
+      setLoading(false);
+    }
   }, [changes, submitTransaction]);
 
   return (
-    <div>
-      <h1>ProposalBuilder</h1>
-      <p>Changed {changes.length} states.</p>
-      <Button onClick={handleSubmit} text="Propose & Approve" disabled={!changes.length} />
-      <hr />
-      {txData && <div>
-        <textarea value={txData} readOnly />
+    <>
+      <Button onClick={handleSubmit} text={<>Propose & Approve {changes.length > 0 && `(${changes.length} changes)`}</>} disabled={!changes.length || loading} className="mt-4" loading={loading} />
+      {txData && <div className="mt-8">
+        <h2>Transaction Data</h2>
+        <Paragraph className="mb-4">Download and share transaction data with other guardians!</Paragraph>
         <Button onClick={() => downloadAsJson(txData)} text="Download" />
-      <br/>Tx HasH: <input readOnly value={txHash} /></div>}
-    </div>
+        <FormGroup label="Transaction Content" className="mt-4">
+          <Input readOnly value={txData} />
+        </FormGroup>
+        <FormGroup label="Transaction Hash" className="mt-4">
+          <Input readOnly value={txHash} />
+        </FormGroup>
+      </div>}
+    </>
   );
 };
