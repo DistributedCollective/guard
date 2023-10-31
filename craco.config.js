@@ -1,6 +1,14 @@
 const webpack = require('webpack');
 
 module.exports = {
+  style: {
+    postcss: {
+      loaderOptions: postcssLoaderOptions => {
+        postcssLoaderOptions.postcssOptions = require('@sovryn/tailwindcss-config/postcss.config.js');
+        return postcssLoaderOptions;
+      },
+    },
+  },
   webpack: {
     configure: config => {
       // ts-loader is required to reference external typescript projects/files (non-transpiled)

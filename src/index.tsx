@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-import './index.css';
+import './styles/tailwindcss/index.css';
 import { Root } from './routes/Root';
 import { App } from './App';
 import { Proposal } from './routes/Proposal';
