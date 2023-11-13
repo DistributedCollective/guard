@@ -79,10 +79,16 @@ export const ProposalBuilder = () => {
         <Paragraph className="mb-4">Download and share transaction data with other guardians!</Paragraph>
         <Button onClick={() => downloadAsJson(txData)} text="Download" />
         <FormGroup label="Transaction Content" className="mt-4">
-          <Input readOnly value={txData} />
+          <div className=" flex justify-start space-x-4">
+            <Input readOnly value={txData} />
+            <Button onClick={() => navigator.clipboard.writeText(txData)} text="Copy" />
+          </div>
         </FormGroup>
         <FormGroup label="Transaction Hash" className="mt-4">
-          <Input readOnly value={txHash} />
+          <div className=" flex justify-start space-x-4">
+            <Input readOnly value={txHash} />
+            <Button onClick={() => navigator.clipboard.writeText(txHash!)} text="Copy" />
+          </div>
         </FormGroup>
       </div>}
     </>

@@ -6,6 +6,7 @@ import SafeSignature from "@safe-global/safe-core-sdk/dist/src/utils/signatures/
 import { Button, ButtonSize, FormGroup, Input } from "@sovryn/ui";
 import EthSignSignature from "@safe-global/safe-core-sdk/dist/src/utils/signatures/SafeSignature";
 import { LinkAccountToExplorer, LinkHashToExplorer } from "../components/LinkToExplorer/LinkToExplorer";
+import { distinctFilter } from "../utils";
 
 export const Sign = () => {
   const { sdk, threshold, owners } = useSafe();
@@ -61,7 +62,7 @@ export const Sign = () => {
     setRefreshing(false);
   }, [hash, sdk]);
 
-  const signers = useMemo(() => [...Array.from(state?.signatures.entries() || []).map(([signer]) => signer), ...approvals].map(item => item.toLowerCase()), [approvals, state?.signatures]);
+  const signers = useMemo(() => [...Array.from(state?.signatures.entries() || []).map(([signer]) => signer), ...approvals].map(item => item.toLowerCase()).filter(distinctFilter), [approvals, state?.signatures]);
 
   const didUserSign = useMemo(() => signers.includes((account || '').toLowerCase()), [account, signers]);
   const canExecute = useMemo(() => threshold <= signers.length, [signers, threshold]);
@@ -124,10 +125,16 @@ export const Sign = () => {
       {state && (
         <>
           <FormGroup label="Transaction Hash" className="mt-4">
-            <Input readOnly value={hash} />
+            <div className="flex justify-start space-x-4">
+              <Input readOnly value={hash} />
+              <Button onClick={() => navigator.clipboard.writeText(hash!)} text="Copy" />
+            </div>
           </FormGroup>
           <FormGroup label="Transaction Content" className="mt-4 mb-4">
-            <Input readOnly value={data} />
+            <div className="flex justify-start space-x-4">
+              <Input readOnly value={data} />
+              <Button onClick={() => navigator.clipboard.writeText(data)} text="Copy" />
+            </div>
           </FormGroup>
 
           {didUserSign && <p className="mb-3">You already signed.</p>}

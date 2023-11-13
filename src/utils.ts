@@ -20,3 +20,6 @@ export const downloadAsJson = (content: string, fileName: string = 'proposal.jso
   a.download = fileName;
   a.click();
 };
+
+
+export const distinctFilter = <T>(value: T, index: number, self: T[]) => self.indexOf(value) === index;
