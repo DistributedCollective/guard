@@ -8,7 +8,7 @@ import EthSignSignature from "@safe-global/safe-core-sdk/dist/src/utils/signatur
 import { LinkAccountToExplorer, LinkHashToExplorer } from "../components/LinkToExplorer/LinkToExplorer";
 
 export const Sign = () => {
-  const { sdk, threshold } = useSafe();
+  const { sdk, threshold, owners } = useSafe();
   const { approveTransaction, executeTransaction, account } = useSigner();
 
   const [preparing, setPreparing] = useState(false);
@@ -108,6 +108,8 @@ export const Sign = () => {
     } return '{}';
   }, [state]);
 
+  const isOwner = useMemo(() => owners.map(owner => owner.toLowerCase()).includes(account?.toLowerCase() ?? ''), [account, owners]);
+
   return (
     <>
       <h1>Approve Proposal</h1>
@@ -132,9 +134,9 @@ export const Sign = () => {
 
           <div className="mb-3">
             {canExecute ? (
-              <Button onClick={handleExecute} text="Execute" loading={loading} disabled={loading || !canExecute} />
+              <Button onClick={handleExecute} text="Execute" loading={loading} disabled={loading || !canExecute || !isOwner} />
             ) : (
-              <Button onClick={approveAndExecute ? handleExecute : handleApprove} text={!approveAndExecute ? 'Approve' : 'Approve & Execute'} loading={loading} disabled={loading || (!canExecute && didUserSign)} />
+              <Button onClick={approveAndExecute ? handleExecute : handleApprove} text={!approveAndExecute ? 'Approve' : 'Approve & Execute'} loading={loading} disabled={loading || (!canExecute && didUserSign) || !isOwner} />
             )}
           </div>
 
