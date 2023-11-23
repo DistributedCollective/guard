@@ -7,10 +7,12 @@ import { Button, ButtonSize, FormGroup, Input } from "@sovryn/ui";
 import EthSignSignature from "@safe-global/safe-core-sdk/dist/src/utils/signatures/SafeSignature";
 import { LinkAccountToExplorer, LinkHashToExplorer } from "../components/LinkToExplorer/LinkToExplorer";
 import { distinctFilter } from "../utils";
+import { useAccount } from "../hooks/useAccount";
 
 export const Sign = () => {
   const { sdk, threshold, owners } = useSafe();
-  const { approveTransaction, executeTransaction, account } = useSigner();
+  const { address } = useAccount();
+  const { approveTransaction, executeTransaction } = useSigner();
 
   const [preparing, setPreparing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -64,7 +66,7 @@ export const Sign = () => {
 
   const signers = useMemo(() => [...Array.from(state?.signatures.entries() || []).map(([signer]) => signer), ...approvals].map(item => item.toLowerCase()).filter(distinctFilter), [approvals, state?.signatures]);
 
-  const didUserSign = useMemo(() => signers.includes((account || '').toLowerCase()), [account, signers]);
+  const didUserSign = useMemo(() => signers.includes((address || '').toLowerCase()), [address, signers]);
   const canExecute = useMemo(() => threshold <= signers.length, [signers, threshold]);
   const approveAndExecute = useMemo(() => signers.length + 1 >= threshold, [signers, threshold]);
 
@@ -109,7 +111,7 @@ export const Sign = () => {
     } return '{}';
   }, [state]);
 
-  const isOwner = useMemo(() => owners.map(owner => owner.toLowerCase()).includes(account?.toLowerCase() ?? ''), [account, owners]);
+  const isOwner = useMemo(() => owners.map(owner => owner.toLowerCase()).includes(address?.toLowerCase() ?? ''), [address, owners]);
 
   return (
     <>
@@ -155,7 +157,7 @@ export const Sign = () => {
               isOwner,
               cd: !canExecute && didUserSign,
               owners,
-              account,
+              address,
             }, null, 2)}</pre>
           </div>
 

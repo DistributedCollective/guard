@@ -112,7 +112,7 @@ const get = (): SharedState => store.getValue();
 
 // Actions
 const connectWallet = (address: string, signer: Signer) => dispatch(state => produce(state, draft => {
-  draft.wallet.address = address;
+  draft.wallet.address = address?.toLowerCase();
   draft.wallet.signer = signer;
   draft.wallet.connected = true;
 }));
@@ -140,7 +140,7 @@ const disconnectSdk = (error: string) => dispatch(state => produce(state, draft 
 }));
 
 const saveOwners = (owners: string[]) => dispatch(state => produce(state, draft => {
-  draft.safe.owners = owners;
+  draft.safe.owners = owners.map(o => o.toLowerCase());
 }));
 
 const saveThreshold = (threshold: number) => dispatch(state => produce(state, draft => {
@@ -150,14 +150,14 @@ const saveThreshold = (threshold: number) => dispatch(state => produce(state, dr
 const connectSignerSdk = (sdk: Safe, account: string) => dispatch(state => produce(state, draft => {
   draft.safeSigner.sdk = null;
   draft.safeSigner.ready = false;
-  draft.safeSigner.account = account;
+  draft.safeSigner.account = account?.toLowerCase();
   draft.safeSigner.error = undefined;
 }));
 
 const disconnectSignerSdk = (sdk: Safe, account: string) => dispatch(state => produce(state, draft => {
   draft.safeSigner.sdk = null;
   draft.safeSigner.ready = false;
-  draft.safeSigner.account = account;
+  draft.safeSigner.account = account?.toLowerCase();
   draft.safeSigner.error = undefined;
 }));
 
