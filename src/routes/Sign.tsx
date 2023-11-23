@@ -149,18 +149,6 @@ export const Sign = () => {
             )}
           </div>
 
-          <div>
-            <pre>{JSON.stringify({
-              loading,
-              didUserSign,
-              canExecute,
-              isOwner,
-              cd: !canExecute && didUserSign,
-              owners,
-              address,
-            }, null, 2)}</pre>
-          </div>
-
           {txHash && (
             <p>Submitted txHash: <LinkHashToExplorer value={txHash} /></p>
           )}
