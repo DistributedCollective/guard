@@ -1,15 +1,39 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
+import './styles/tailwindcss/index.css';
+import { Root } from './routes/Root';
+import { App } from './App';
+import { Proposal } from './routes/Proposal';
+import { Sign } from './routes/Sign';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Root />,
+    children: [
+      {
+        index: true,
+        element: <Proposal />
+      },
+      {
+        path: "/sign",
+        element: <Sign />,
+      },
+    ],
+  },
+]);
+
 root.render(
   <React.StrictMode>
-    <App />
+    <App>
+      <RouterProvider router={router} />
+    </App>
   </React.StrictMode>
 );
 

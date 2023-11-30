@@ -1,46 +1,58 @@
-# Getting Started with Create React App
+# Sovryn Guardian UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![Netlify Status](https://api.netlify.com/api/v1/badges/97f189de-85e0-4d0c-9696-a8f96bcf66c5/deploy-status)](https://app.netlify.com/sites/sovryn-guard/deploys)
 
-## Available Scripts
 
-In the project directory, you can run:
+Gnosis safe sdk: https://safe-global.github.io/safe-core-sdk/
 
-### `yarn start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# Initial setup
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Install NodeJS - must be v18 or higher
+- Install Yarn globally - `npm i -g yarn`
+- Clone this repository - `git clone https://github.com/DistributedCollective/guard`
+- Navigate to the new cloned repository folder and run `yarn` to install packages
+- Run the application by executing `yarn dev`
 
-### `yarn test`
+# Usage
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 0. Set up correct chain
 
-### `yarn build`
+The app is configured to run on Mainnet RSK by default, if you need to run it on Testnet please amend `.env` file to have the line `REACT_APP_CHAIN_ID=31` instead of `REACT_APP_CHAIN_ID=30`. You may also create a `.env.local` file in the same location with the same contents and it will override that found in `.env`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 1. Connect to safe
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Connect to safe using your wallet
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 2. Create a new transaction
 
-### `yarn eject`
+Use checkboxes to select modules you want disable or enable, "Propose & Approve" button will light up when you select at least one module.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Click "Propose & Approve" button to create a new transaction and sign it.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 3. Download proposal file
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Once signed, you will see a download button, click it to download a proposal file.
+Share this file with other guardians.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+You will also see transaction content and hash used to verify the proposal.
 
-## Learn More
+## 4. Approve proposal
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Other guardians need to open guardian website, connect to safe and open "Sign" page.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+They then need to upload the proposal file.
+
+Once uploaded, they will see transaction hash and who already signed it.
+
+They can then click "Approve" / "Approve & Execute" or "Execute" button to sign / execute the transaction.
+
+## 5. Execute proposal
+
+In most cases, last approver will execute the transaction (they will see "Approve & Execute" button). But if it was not executed, you will see "Execute" button once there is enought signers.
+
+## 6. !!!!!Verify execution!!!!!!
+
+After execution, guardian website DOES NOT indicate it was executed or that last approval happened!
+Check it manually by opening transaction hash in explorer and checking for the events!
+

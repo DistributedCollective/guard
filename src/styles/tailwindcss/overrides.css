@@ -1,0 +1,4 @@
+/** Fix pagination on Mobile WalletConnect wallet list **/
+#walletconnect-wrapper .walletconnect-modal__footer {
+  flex-wrap: wrap;
+}

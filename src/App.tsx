@@ -1,26 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FC, PropsWithChildren, useEffect } from 'react';
+import { Button } from '@sovryn/ui';
+import { useAccount } from './hooks/useAccount';
+import { useSafe } from './hooks/useSafe';
+import { OnboardProvider } from '@sovryn/onboard-react';
 
-function App() {
+export const App: FC<PropsWithChildren> = ({ children }) => {
+  const { init } = useSafe();
+  const { address, connect } = useAccount();
+
+  useEffect(() => {
+    init();
+  }, [init]);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {address ? (<>{children}</>) : (<div className='w-full h-screen flex justify-center items-center'><Button text="Connect Wallet" onClick={connect} /></div>)}
+      <OnboardProvider />
+    </>
   );
 }
-
-export default App;
