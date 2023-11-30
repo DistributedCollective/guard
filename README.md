@@ -6,6 +6,13 @@
 Gnosis safe sdk: https://safe-global.github.io/safe-core-sdk/
 
 
+# Initial setup
+
+- Install NodeJS - must be v18 or higher
+- Install Yarn globally - `npm i -g yarn`
+- Clone this repository - `git clone https://github.com/DistributedCollective/guard`
+- Navigate to the new cloned repository folder and run `yarn` to install packages
+- Run the application by executing `yarn dev`
 
 # Usage
 
