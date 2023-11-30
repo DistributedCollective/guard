@@ -16,6 +16,10 @@ Gnosis safe sdk: https://safe-global.github.io/safe-core-sdk/
 
 # Usage
 
+## 0. Set up correct chain
+
+The app is configured to run on Mainnet RSK by default, if you need to run it on Testnet please amend `.env` file to have the line `REACT_APP_CHAIN_ID=31` instead of `REACT_APP_CHAIN_ID=30`. You may also create a `.env.local` file in the same location with the same contents and it will override that found in `.env`
+
 ## 1. Connect to safe
 
 Connect to safe using your wallet
