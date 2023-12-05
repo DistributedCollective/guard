@@ -22,6 +22,7 @@ The app is configured to run on Mainnet RSK by default, if you need to run it on
 
 App also supports custom RPC endpoints, you can set it up by adding `REACT_APP_RPC_URL` to `.env` file. Include `REACT_APP_CUSTOM_BLOCK_EXPLORER` to use custom block explorer (Only works with custom rpc).
 
+
 ## 1. Connect to safe
 
 Connect to safe using your wallet
