@@ -51,7 +51,7 @@ export const PAUSER_METHODS: PauserContract[] = [{
     },
   ],
   addresses: {
-    [ChainIds.RSK_MAINNET]: '',
+    [ChainIds.RSK_MAINNET]: '0x5A0D867e0D70Fcc6Ade25C3F1B89d618b5B4Eaa7',
     [ChainIds.RSK_TESTNET]: '0x25380305f223B32FDB844152abD2E82BC5Ad99c3',
   },
   methods: [{
@@ -69,7 +69,7 @@ export const PAUSER_METHODS: PauserContract[] = [{
     'function freezeUnfreeze(bool)',
   ],
   addresses: {
-    [ChainIds.RSK_MAINNET]: '',
+    [ChainIds.RSK_MAINNET]: '0x5684a06CaB22Db16d901fEe2A5C081b4C91eA40e',
     [ChainIds.RSK_TESTNET]: '0xc37A85e35d7eECC82c4544dcba84CF7E61e1F1a3',
   },
   methods: [{
