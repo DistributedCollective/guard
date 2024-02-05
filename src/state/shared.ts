@@ -166,6 +166,7 @@ const initPauserValues = (items: PausedState[]) => dispatch(state => produce(sta
   draft.proposal = items;
   draft.pauser.loaded = true;
   draft.pauser.loading = false;
+  console.log('init', items);
 }));
 
 const failPauserValues = (error: string) => dispatch(state => produce(state, draft => {

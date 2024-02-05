@@ -6,16 +6,18 @@ import { MetaTransactionData } from '@safe-global/safe-core-sdk-types';
 import { useSigner } from "../../hooks/useSigner";
 import { CONTRACTS } from "../../config/contracts";
 
-const makeTransactionData = (group: string, method: string, value: boolean): MetaTransactionData => {
+const makeTransactionData = (group: string, method: string, value: boolean, key?: string): MetaTransactionData => {
   const _group = CONTRACTS.find((item) => item.group === group);
-  const _method = _group?.methods.find((item) => item.name === method);
+  const _method = _group?.methods.find((item) => item.name === method && key === item.key);
 
   if (!_group || !_method) {
     throw new Error(`Invalid group or method: ${group}.${method}`);
   }
 
   let data = '';
-  if (_method.flag) {
+  if (_method.flag && _method.key) {
+    data = _group.contract.interface.encodeFunctionData(_method.toggle, [_method.key, value]);
+  } else if (_method.flag) {
     data = _group.contract.interface.encodeFunctionData(_method.toggle, [value]);
   } else {
     data = _group.contract.interface.encodeFunctionData(_method.unpause && !value ? _method.unpause : _method.toggle, []);

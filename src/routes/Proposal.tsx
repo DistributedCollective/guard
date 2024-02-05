@@ -9,15 +9,23 @@ import { CONTRACTS } from "../config/contracts";
 export const Proposal = () => {
 
   useEffect(() => {
-    const methods = toPausedState(PAUSER_METHODS);
+    try {
+      const methods = toPausedState(PAUSER_METHODS);
 
-    const items = methods.map((item) => {
-      const group = CONTRACTS.find((contract) => contract.group === item.group)!;
-      const method = group.methods.find((method) => method.name === item.method)!.read;
-      return group.contract[method]().then((value: boolean) => ({ group: item.group, method: item.method, value }));
-    });
-
-    Promise.all(items).then(state.actions.initPauserValues).catch(console.error);
+      const items = methods.map((item) => {
+        const group = CONTRACTS.find((contract) => contract.group === item.group)!;
+        const method = group.methods.find((method) => method.name === item.method)!;
+        const methodName = method.read;
+        if (method.flag && method.key) {
+          return group.contract[methodName](method.key).then((value: boolean) => ({ group: item.group, method: item.method, value }));
+        }
+        return group.contract[methodName]().then((value: boolean) => ({ group: item.group, method: item.method, value }));
+      });
+  
+      Promise.all(items).then(state.actions.initPauserValues).catch(e => console.error('failed to initiate', e));
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   return (

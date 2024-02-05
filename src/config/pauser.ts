@@ -14,6 +14,61 @@ export type PauserMethod = {
   toggle: string;
   unpause?: string;
   flag?: boolean;
+  key?: string;
+};
+
+const I_TOKEN_ABI = [
+  'function checkPause(string) view returns (bool)',
+  'function toggleFunctionPause(string,bool)',
+];
+
+const I_TOKEN_FUNCTIONS = [
+  'borrow', 'marginTrade'
+];
+
+const BRIDGE_ABI = [
+  'function paused() view returns (bool)',
+  'function pause()',
+  'function unpause()',
+  'function frozen() view returns (bool)',
+  'function freeze()',
+  'function unfreeze()',
+];
+
+const loanTokens: Record<string, Record<string, string>> = {
+  iDOC: {
+    [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+  },
+  iUSDT: {
+    [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+  },
+  iRBTC: {
+    [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+  },
+  iBRPO: {
+    [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+  },
+  iXUSD: {
+    [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+  },
+  iDLLR: {
+    [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+  },
+};
+
+const bridges: Record<string, Record<string, string>> = {
+  'Bridge ETH-RSK, ETH Side': {
+    [ChainIds.RSK_MAINNET]: '0x33C0D33a0d4312562ad622F91d12B0AC47366EE1',
+  },
+  'Bridge ETH-RSK, RSK Side': {
+    [ChainIds.RSK_MAINNET]: '0x1CcAd820B6d031B41C54f1F3dA11c0d48b399581',
+  },
+  'Bridge BSC-RSK, BSC Side': {
+    [ChainIds.RSK_MAINNET]: '0xdfc7127593c8af1a17146893f10e08528f4c2aa7',
+  },
+  'Bridge BSC-RSK, RSK Side': {
+    [ChainIds.RSK_MAINNET]: '0x971b97c8cc82e7d27bc467c2dc3f219c6ee2e350',
+  },
 };
 
 export const PAUSER_METHODS: PauserContract[] = [{
@@ -55,7 +110,7 @@ export const PAUSER_METHODS: PauserContract[] = [{
     [ChainIds.RSK_TESTNET]: '0x25380305f223B32FDB844152abD2E82BC5Ad99c3',
   },
   methods: [{
-    name: 'isProtocolPaused',
+    name: 'Pause protocol',
     read: 'isProtocolPaused',
     toggle: 'togglePaused(bool)',
     flag: true,
@@ -84,42 +139,8 @@ export const PAUSER_METHODS: PauserContract[] = [{
     flag: true,
   }],
 }, {
-  group: 'Loan Token Beacon WRBTC',
-  abi: [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "paused",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "pause",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "unpause",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ],
+  group: 'Loan Token Logic WRBTC',
+  abi: BRIDGE_ABI,
   addresses: {
     [ChainIds.RSK_MAINNET]: '0x845eF7Be59664899398282Ef42239634aBDd752C',
     [ChainIds.RSK_TESTNET]: '0x6EDEeC91f5C0A57248BF4D7dBce2c689c74F3c06',
@@ -131,42 +152,8 @@ export const PAUSER_METHODS: PauserContract[] = [{
     unpause: 'unpause',
   }],
 }, {
-  group: 'Loan Token Beacon LM',
-  abi: [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "paused",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "pause",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "unpause",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    }
-  ],
+  group: 'Loan Token Logic LM',
+  abi: BRIDGE_ABI,
   addresses: {
     [ChainIds.RSK_MAINNET]: '0x5b155ECcC1dC31Ea59F2c12d2F168C956Ac0FFAa',
     [ChainIds.RSK_TESTNET]: '0xb9f993E7Da03D8a21Cda6fa1925BAAE17C6932aE',
@@ -179,20 +166,36 @@ export const PAUSER_METHODS: PauserContract[] = [{
   }],
 }];
 
-if (process.env.NODE_ENV === 'development') {
+for (const group in loanTokens) {
   PAUSER_METHODS.push({
-    group: 'SOV Token (test only)',
-    addresses: {
-      [ChainIds.RSK_TESTNET]: '0x6a9A07972D07e58F0daf5122d11E069288A375fb',
-      [ChainIds.RSK_MAINNET]: '0xEFc78fc7d48b64958315949279Ba181c2114ABBd',
-    },
-    abi: [
-      'function symbol() view returns (string)',
-    ],
-    methods: [{
-      name: 'symbol',
-      read: 'symbol',
-      toggle: 'symbol()',
-    }],
+    group: `${group} Loan Token`,
+    addresses: loanTokens[group],
+    abi: I_TOKEN_ABI, // todo: add actual abi
+    methods: I_TOKEN_FUNCTIONS.map(name => ({
+        name: `Pause: ${name} function`,
+        read: 'checkPause(string)',
+        toggle: 'toggleFunctionPause(string,bool)',
+        flag: true,
+        value: name,
+    })),
   });
 }
+
+// for (const group in bridges) {
+//   PAUSER_METHODS.push({
+//     group: group,
+//     addresses: bridges[group],
+//     abi: BRIDGE_ABI,
+//     methods: [{
+//       name: 'Pause',
+//       read: 'paused',
+//       toggle: 'pause',
+//       unpause: 'unpause',
+//     }, {
+//         name: 'Freeze',
+//         read: 'frozen',
+//         toggle: 'freeze',
+//         unpause: 'unfreeze',
+//     }],
+//   });
+// }
