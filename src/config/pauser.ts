@@ -57,20 +57,20 @@ const loanTokens: Record<string, Record<string, string>> = {
   },
 };
 
-const bridges: Record<string, Record<string, string>> = {
-  'Bridge ETH-RSK, ETH Side': {
-    [ChainIds.RSK_MAINNET]: '0x33C0D33a0d4312562ad622F91d12B0AC47366EE1',
-  },
-  'Bridge ETH-RSK, RSK Side': {
-    [ChainIds.RSK_MAINNET]: '0x1CcAd820B6d031B41C54f1F3dA11c0d48b399581',
-  },
-  'Bridge BSC-RSK, BSC Side': {
-    [ChainIds.RSK_MAINNET]: '0xdfc7127593c8af1a17146893f10e08528f4c2aa7',
-  },
-  'Bridge BSC-RSK, RSK Side': {
-    [ChainIds.RSK_MAINNET]: '0x971b97c8cc82e7d27bc467c2dc3f219c6ee2e350',
-  },
-};
+// const bridges: Record<string, Record<string, string>> = {
+//   'Bridge ETH-RSK, ETH Side': {
+//     [ChainIds.RSK_MAINNET]: '0x33C0D33a0d4312562ad622F91d12B0AC47366EE1',
+//   },
+//   'Bridge ETH-RSK, RSK Side': {
+//     [ChainIds.RSK_MAINNET]: '0x1CcAd820B6d031B41C54f1F3dA11c0d48b399581',
+//   },
+//   'Bridge BSC-RSK, BSC Side': {
+//     [ChainIds.RSK_MAINNET]: '0xdfc7127593c8af1a17146893f10e08528f4c2aa7',
+//   },
+//   'Bridge BSC-RSK, RSK Side': {
+//     [ChainIds.RSK_MAINNET]: '0x971b97c8cc82e7d27bc467c2dc3f219c6ee2e350',
+//   },
+// };
 
 export const PAUSER_METHODS: PauserContract[] = [{
   group: 'Protocol',
