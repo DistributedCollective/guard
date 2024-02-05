@@ -22,9 +22,10 @@ const I_TOKEN_ABI = [
   'function toggleFunctionPause(string,bool)',
 ];
 
-const I_TOKEN_FUNCTIONS = [
-  'borrow', 'marginTrade'
-];
+const I_TOKEN_FUNCTIONS: Record<string, string> = {
+  borrow: "borrow(bytes32,uint256,uint256,uint256,address,address,address,bytes)",
+  marginTrade: "marginTrade(bytes32,uint256,uint256,uint256,address,address,uint256,bytes)",
+}
 
 const BRIDGE_ABI = [
   'function paused() view returns (bool)',
@@ -171,12 +172,12 @@ for (const group in loanTokens) {
     group: `${group} Loan Token`,
     addresses: loanTokens[group],
     abi: I_TOKEN_ABI, // todo: add actual abi
-    methods: I_TOKEN_FUNCTIONS.map(name => ({
-        name: `Pause: ${name} function`,
+    methods: Object.keys(I_TOKEN_FUNCTIONS).map(name => ({
+        name: `Pause: ${name}`,
         read: 'checkPause(string)',
         toggle: 'toggleFunctionPause(string,bool)',
         flag: true,
-        value: name,
+        key: I_TOKEN_FUNCTIONS[name],
     })),
   });
 }
