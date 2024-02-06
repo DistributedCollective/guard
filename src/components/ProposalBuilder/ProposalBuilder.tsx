@@ -6,12 +6,12 @@ import { MetaTransactionData } from '@safe-global/safe-core-sdk-types';
 import { useSigner } from "../../hooks/useSigner";
 import { CONTRACTS } from "../../config/contracts";
 
-const makeTransactionData = (group: string, method: string, value: boolean, key?: string): MetaTransactionData => {
+const makeTransactionData = (group: string, uid: string, value: boolean): MetaTransactionData => {
   const _group = CONTRACTS.find((item) => item.group === group);
-  const _method = _group?.methods.find((item) => item.name === method && key === item.key);
+  const _method = _group?.methods.find((item) => item.uid === uid);
 
   if (!_group || !_method) {
-    throw new Error(`Invalid group or method: ${group}.${method}`);
+    throw new Error(`Invalid group or method: ${group}.${uid}`);
   }
 
   let data = '';
@@ -56,7 +56,7 @@ export const ProposalBuilder = () => {
   const handleSubmit = useCallback(async () => {
     setLoading(true);
     try {
-      const value = await submitTransaction(changes.map(item => makeTransactionData(item.group, item.method, item.value)));
+      const value = await submitTransaction(changes.map(item => makeTransactionData(item.group, item.uid, item.value)));
 
       const signatures = Array.from(value.safeTransaction.signatures.entries());
   
@@ -82,7 +82,7 @@ export const ProposalBuilder = () => {
         <Button onClick={() => downloadAsJson(txData)} text="Download" />
         <FormGroup label="Transaction Content" className="mt-4">
           <div className=" flex justify-start space-x-4">
-            <Input readOnly value={txData} />
+            <textarea readOnly value={txData} className="w-full h-64 rounded px-3 leading-tight text-xs font-medium bg-gray-70/50 border border-gray-50 text-gray-30" />
             <Button onClick={() => navigator.clipboard.writeText(txData)} text="Copy" />
           </div>
         </FormGroup>

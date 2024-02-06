@@ -17,7 +17,7 @@ export const PauserGroupCard: FC<PauserGroupCardProps> = ({ group }) => {
   return (
     <div className="mb-2">
       <h2><LinkAccountToExplorer value={address} label={group.group} /></h2>
-      {group.methods.map(item => <Checkbox key={item.read + item.key} className="ml-2" label={<>{item.name} {isDirty(item.name) ? ' (changed)' : ' (initial)'}</>} disabled={loading} checked={get(item.name)} onChangeValue={value => set(item.name, value)} />)}
+      {group.methods.map(item => <Checkbox key={item.uid} className="ml-2" label={<>{item.name} {isDirty(item.name) ? ' (changed)' : ' (initial)'}</>} disabled={loading} checked={get(item.uid)} onChangeValue={value => set(item.uid, value)} />)}
     </div>
   );
 };

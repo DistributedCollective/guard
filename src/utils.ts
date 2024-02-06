@@ -1,13 +1,14 @@
-import { PauserContract } from "./config/pauser";
+import { utils } from "ethers";
+import { PauserContract, PauserMethodBuilder } from "./config/pauser";
 import { PausedState } from "./state/shared";
 
 export const flatten = (items: Array<Record<string, boolean>>): Record<string, boolean> => items.reduce((p, c) => ({...p, ...c }), {} as Record<string, boolean>);
 
-export const toPausedState = (items: PauserContract[]): PausedState[] => items.reduce((p, c) => [...p, ...c.methods.map(m => ({ group: c.group, method: m.name, value: false }))], [] as PausedState[]);
+export const toPausedState = (items: PauserContract[]): PausedState[] => items.reduce((p, c) => [...p, ...c.methods.map(m => ({ uid: m.uid, group: c.group, method: m.name, value: false }))], [] as PausedState[]);
 
 export const findChanged = (initial: PausedState[], current: PausedState[]): PausedState[] => {
   return current.filter(item => {
-    const i = initial.find(i => i.group === item.group && i.method === item.method)?.value || false;
+    const i = initial.find(i => i.group === item.group && i.uid === item.uid)?.value || false;
     return i !== item.value;
   });
 }
@@ -23,3 +24,5 @@ export const downloadAsJson = (content: string, fileName: string = 'proposal.jso
 
 
 export const distinctFilter = <T>(value: T, index: number, self: T[]) => self.indexOf(value) === index;
+
+export const methodUid = (method: PauserMethodBuilder): string => utils.id([method.name, method.key ?? 'default'].join(':'));

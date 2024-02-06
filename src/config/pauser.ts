@@ -1,20 +1,29 @@
 import { ChainId, ChainIds } from "@sovryn/ethers-provider";
 import { ContractInterface } from "ethers";
+import { methodUid } from "../utils";
 
-export type PauserContract = {
+export type PauserContractBuilder = {
   group: string;
   abi: ContractInterface;
   addresses: Partial<Record<ChainId, string>>;
-  methods: PauserMethod[];
+  methods: PauserMethodBuilder[];
 };
 
-export type PauserMethod = {
+export type PauserMethodBuilder = {
   name: string;
   read: string;
   toggle: string;
   unpause?: string;
   flag?: boolean;
   key?: string;
+};
+
+export type PauserContract = Omit<PauserContractBuilder, 'methods'> & {
+  methods: PauserMethod[];
+};
+
+export type PauserMethod = PauserMethodBuilder & {
+  uid: string;
 };
 
 const I_TOKEN_ABI = [
@@ -39,40 +48,50 @@ const BRIDGE_ABI = [
 const loanTokens: Record<string, Record<string, string>> = {
   iDOC: {
     [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+    [ChainIds.RSK_TESTNET]: '0x74e00A8CeDdC752074aad367785bFae7034ed89f',
   },
   iUSDT: {
     [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+    [ChainIds.RSK_TESTNET]: '0xd1f225BEAE98ccc51c468d1E92d0331c4f93e566',
   },
   iRBTC: {
     [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+    [ChainIds.RSK_TESTNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
   },
   iBRPO: {
     [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+    [ChainIds.RSK_TESTNET]: '0x6226b4B3F29Ecb5f9EEC3eC3391488173418dD5d',
   },
   iXUSD: {
     [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+    [ChainIds.RSK_TESTNET]: '0xE27428101550f8104A6d06D830e2E0a097e1d006',
   },
   iDLLR: {
     [ChainIds.RSK_MAINNET]: '0xd8D25f03EBbA94E15Df2eD4d6D38276B595593c1',
+    [ChainIds.RSK_TESTNET]: '0x9125087A98BC975Fa3E912226165D5C7e9F669cc',
   },
 };
 
 // const bridges: Record<string, Record<string, string>> = {
 //   'Bridge ETH-RSK, ETH Side': {
 //     [ChainIds.RSK_MAINNET]: '0x33C0D33a0d4312562ad622F91d12B0AC47366EE1',
+//     [ChainIds.RSK_TESTNET]: '0x2b456e230225C4670FBF10b9dA506C019a24cAC7',
 //   },
 //   'Bridge ETH-RSK, RSK Side': {
 //     [ChainIds.RSK_MAINNET]: '0x1CcAd820B6d031B41C54f1F3dA11c0d48b399581',
+//     [ChainIds.RSK_TESTNET]: '0xC0E7A7FfF4aBa5e7286D5d67dD016B719DCc9156',
 //   },
 //   'Bridge BSC-RSK, BSC Side': {
 //     [ChainIds.RSK_MAINNET]: '0xdfc7127593c8af1a17146893f10e08528f4c2aa7',
+//     [ChainIds.RSK_TESTNET]: '0x862e8aff917319594cc7faaae5350d21196c086f',
 //   },
 //   'Bridge BSC-RSK, RSK Side': {
 //     [ChainIds.RSK_MAINNET]: '0x971b97c8cc82e7d27bc467c2dc3f219c6ee2e350',
+//     [ChainIds.RSK_TESTNET]: '0x2b2bcad081fa773dc655361d1bb30577caa556f8',
 //   },
 // };
 
-export const PAUSER_METHODS: PauserContract[] = [{
+const pauserMethods: PauserContractBuilder[] = [{
   group: 'Protocol',
   abi: [
     {
@@ -168,7 +187,7 @@ export const PAUSER_METHODS: PauserContract[] = [{
 }];
 
 for (const group in loanTokens) {
-  PAUSER_METHODS.push({
+  pauserMethods.push({
     group: `${group} Loan Token`,
     addresses: loanTokens[group],
     abi: I_TOKEN_ABI, // todo: add actual abi
@@ -183,7 +202,7 @@ for (const group in loanTokens) {
 }
 
 // for (const group in bridges) {
-//   PAUSER_METHODS.push({
+//   pauserMethods.push({
 //     group: group,
 //     addresses: bridges[group],
 //     abi: BRIDGE_ABI,
@@ -200,3 +219,11 @@ for (const group in loanTokens) {
 //     }],
 //   });
 // }
+
+export const PAUSER_METHODS: PauserContract[] = pauserMethods.map(item => ({
+  ...item,
+  methods: item.methods.map(method => ({
+    ...method,
+    uid: methodUid(method),
+  })),
+}));
