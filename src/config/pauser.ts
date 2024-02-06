@@ -72,24 +72,24 @@ const loanTokens: Record<string, Record<string, string>> = {
   },
 };
 
-// const bridges: Record<string, Record<string, string>> = {
-//   'Bridge ETH-RSK, ETH Side': {
-//     [ChainIds.RSK_MAINNET]: '0x33C0D33a0d4312562ad622F91d12B0AC47366EE1',
-//     [ChainIds.RSK_TESTNET]: '0x2b456e230225C4670FBF10b9dA506C019a24cAC7',
-//   },
-//   'Bridge ETH-RSK, RSK Side': {
-//     [ChainIds.RSK_MAINNET]: '0x1CcAd820B6d031B41C54f1F3dA11c0d48b399581',
-//     [ChainIds.RSK_TESTNET]: '0xC0E7A7FfF4aBa5e7286D5d67dD016B719DCc9156',
-//   },
-//   'Bridge BSC-RSK, BSC Side': {
-//     [ChainIds.RSK_MAINNET]: '0xdfc7127593c8af1a17146893f10e08528f4c2aa7',
-//     [ChainIds.RSK_TESTNET]: '0x862e8aff917319594cc7faaae5350d21196c086f',
-//   },
-//   'Bridge BSC-RSK, RSK Side': {
-//     [ChainIds.RSK_MAINNET]: '0x971b97c8cc82e7d27bc467c2dc3f219c6ee2e350',
-//     [ChainIds.RSK_TESTNET]: '0x2b2bcad081fa773dc655361d1bb30577caa556f8',
-//   },
-// };
+const bridges: Record<string, Record<string, string>> = {
+  // 'Bridge ETH-RSK, ETH Side': {
+  //   [ChainIds.RSK_MAINNET]: '0x33C0D33a0d4312562ad622F91d12B0AC47366EE1',
+  //   [ChainIds.RSK_TESTNET]: '0x2b456e230225C4670FBF10b9dA506C019a24cAC7',
+  // },
+  'Bridge ETH-RSK, RSK Side': {
+    [ChainIds.RSK_MAINNET]: '0x1CcAd820B6d031B41C54f1F3dA11c0d48b399581',
+    [ChainIds.RSK_TESTNET]: '0xC0E7A7FfF4aBa5e7286D5d67dD016B719DCc9156',
+  },
+  // 'Bridge BSC-RSK, BSC Side': {
+  //   [ChainIds.RSK_MAINNET]: '0xdfc7127593c8af1a17146893f10e08528f4c2aa7',
+  //   [ChainIds.RSK_TESTNET]: '0x862e8aff917319594cc7faaae5350d21196c086f',
+  // },
+  'Bridge BSC-RSK, RSK Side': {
+    [ChainIds.RSK_MAINNET]: '0x971b97c8cc82e7d27bc467c2dc3f219c6ee2e350',
+    [ChainIds.RSK_TESTNET]: '0x2b2bcad081fa773dc655361d1bb30577caa556f8',
+  },
+};
 
 const pauserMethods: PauserContractBuilder[] = [{
   group: 'Protocol',
@@ -201,24 +201,19 @@ for (const group in loanTokens) {
   });
 }
 
-// for (const group in bridges) {
-//   pauserMethods.push({
-//     group: group,
-//     addresses: bridges[group],
-//     abi: BRIDGE_ABI,
-//     methods: [{
-//       name: 'Pause',
-//       read: 'paused',
-//       toggle: 'pause',
-//       unpause: 'unpause',
-//     }, {
-//         name: 'Freeze',
-//         read: 'frozen',
-//         toggle: 'freeze',
-//         unpause: 'unfreeze',
-//     }],
-//   });
-// }
+for (const group in bridges) {
+  pauserMethods.push({
+    group: group,
+    addresses: bridges[group],
+    abi: BRIDGE_ABI,
+    methods: [{
+      name: 'Pause',
+      read: 'paused',
+      toggle: 'pause',
+      unpause: 'unpause',
+    }],
+  });
+}
 
 export const PAUSER_METHODS: PauserContract[] = pauserMethods.map(item => ({
   ...item,

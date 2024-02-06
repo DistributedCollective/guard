@@ -168,7 +168,6 @@ const initPauserValues = (items: PausedState[]) => dispatch(state => produce(sta
   draft.proposal = items;
   draft.pauser.loaded = true;
   draft.pauser.loading = false;
-  console.log('init', items);
 }));
 
 const failPauserValues = (error: string) => dispatch(state => produce(state, draft => {
@@ -182,7 +181,9 @@ const setProposalValue = (group: string, uid: string, value: boolean) => dispatc
   const index = draft.proposal.findIndex(p => p.group === group && p.uid === uid);
 
   if (index === -1) {
-    // draft.proposal.push({ group, uid, value });
+    const item = PAUSER_METHODS.find(p => p.group === group)?.methods.find(m => m.uid === uid);
+    if (!item) return;
+    draft.proposal.push({ group, uid, method: item.name, value });
     return;
   }
   draft.proposal[index].value = value;
