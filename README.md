@@ -5,7 +5,6 @@
 
 Gnosis safe sdk: https://safe-global.github.io/safe-core-sdk/
 
-
 # Initial setup
 
 - Install NodeJS - must be v18 or higher
