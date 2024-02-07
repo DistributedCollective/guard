@@ -39,9 +39,11 @@ export type SafeSignerState = SafeState & {
 };
 
 export type PausedState = {
+  uid: string;
   group: string;
   method: string;
   value: boolean;
+  reason?: Error;
 };
 
 export type InitialPauserState = {
@@ -175,13 +177,17 @@ const failPauserValues = (error: string) => dispatch(state => produce(state, dra
   draft.pauser.error = error;
 }));
 
-const setProposalValue = (group: string, method: string, value: boolean) => dispatch(state => produce(state, draft => {
-  const index = draft.proposal.findIndex(p => p.group === group && p.method === method);
+const setProposalValue = (group: string, uid: string, value: boolean) => dispatch(state => produce(state, draft => {
+  const index = draft.proposal.findIndex(p => p.group === group && p.uid === uid);
+
   if (index === -1) {
-    draft.proposal.push({ group, method, value });
+    const item = PAUSER_METHODS.find(p => p.group === group)?.methods.find(m => m.uid === uid);
+    if (!item) return;
+    draft.proposal.push({ group, uid, method: item.name, value });
     return;
   }
   draft.proposal[index].value = value;
+
 }));
 
 export const state = {

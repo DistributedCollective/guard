@@ -9,9 +9,11 @@ import setup, { Chain, ChainIds } from '@sovryn/ethers-provider';
 export const CHAIN_ID: string = '0x' + Number(parseInt(process.env.REACT_APP_CHAIN_ID || '30')).toString(16);
 
 export const IS_MAINNET = CHAIN_ID === ChainIds.RSK_MAINNET;
+const CUSTOM_RPC = process.env.REACT_APP_CUSTOM_RPC;
+const CUSTOM_BLOCK_EXPLORER = process.env.REACT_APP_CUSTOM_BLOCK_EXPLORER;
 
 const chains: Chain[] = [
-  IS_MAINNET
+  CUSTOM_RPC ? { id: CHAIN_ID, label: 'Custom RPC', token: 'RBTC', publicRpcUrl: CUSTOM_RPC, rpcUrl: [CUSTOM_RPC], blockExplorerUrl: CUSTOM_BLOCK_EXPLORER } : IS_MAINNET
     ? {
         id: ChainIds.RSK_MAINNET,
         label: 'Rootstock',
@@ -31,7 +33,7 @@ const chains: Chain[] = [
         publicRpcUrl: 'https://testnet.sovryn.app/rpc',
         rpcUrl: ['https://public-node.testnet.rsk.co', 'https://testnet.sovryn.app/rpc'],
         blockExplorerUrl: 'https://explorer.testnet.rsk.co',
-      },
+      }
 ];
 
 const basePaths: BasePath[] = [

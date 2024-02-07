@@ -5,7 +5,6 @@
 
 Gnosis safe sdk: https://safe-global.github.io/safe-core-sdk/
 
-
 # Initial setup
 
 - Install NodeJS - must be v18 or higher
@@ -19,6 +18,9 @@ Gnosis safe sdk: https://safe-global.github.io/safe-core-sdk/
 ## 0. Set up correct chain
 
 The app is configured to run on Mainnet RSK by default, if you need to run it on Testnet please amend `.env` file to have the line `REACT_APP_CHAIN_ID=31` instead of `REACT_APP_CHAIN_ID=30`. You may also create a `.env.local` file in the same location with the same contents and it will override that found in `.env`
+
+App also supports custom RPC endpoints, you can set it up by adding `REACT_APP_RPC_URL` to `.env` file. Include `REACT_APP_CUSTOM_BLOCK_EXPLORER` to use custom block explorer (Only works with custom rpc).
+
 
 ## 1. Connect to safe
 

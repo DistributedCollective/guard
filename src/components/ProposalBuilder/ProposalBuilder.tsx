@@ -6,16 +6,18 @@ import { MetaTransactionData } from '@safe-global/safe-core-sdk-types';
 import { useSigner } from "../../hooks/useSigner";
 import { CONTRACTS } from "../../config/contracts";
 
-const makeTransactionData = (group: string, method: string, value: boolean): MetaTransactionData => {
+const makeTransactionData = (group: string, uid: string, value: boolean): MetaTransactionData => {
   const _group = CONTRACTS.find((item) => item.group === group);
-  const _method = _group?.methods.find((item) => item.name === method);
+  const _method = _group?.methods.find((item) => item.uid === uid);
 
   if (!_group || !_method) {
-    throw new Error(`Invalid group or method: ${group}.${method}`);
+    throw new Error(`Invalid group or method: ${group}.${uid}`);
   }
 
   let data = '';
-  if (_method.flag) {
+  if (_method.flag && _method.key) {
+    data = _group.contract.interface.encodeFunctionData(_method.toggle, [_method.key, value]);
+  } else if (_method.flag) {
     data = _group.contract.interface.encodeFunctionData(_method.toggle, [value]);
   } else {
     data = _group.contract.interface.encodeFunctionData(_method.unpause && !value ? _method.unpause : _method.toggle, []);
@@ -54,7 +56,7 @@ export const ProposalBuilder = () => {
   const handleSubmit = useCallback(async () => {
     setLoading(true);
     try {
-      const value = await submitTransaction(changes.map(item => makeTransactionData(item.group, item.method, item.value)));
+      const value = await submitTransaction(changes.map(item => makeTransactionData(item.group, item.uid, item.value)));
 
       const signatures = Array.from(value.safeTransaction.signatures.entries());
   
@@ -80,7 +82,7 @@ export const ProposalBuilder = () => {
         <Button onClick={() => downloadAsJson(txData)} text="Download" />
         <FormGroup label="Transaction Content" className="mt-4">
           <div className=" flex justify-start space-x-4">
-            <Input readOnly value={txData} />
+            <textarea readOnly value={txData} className="w-full h-64 rounded px-3 leading-tight text-xs font-medium bg-gray-70/50 border border-gray-50 text-gray-30" />
             <Button onClick={() => navigator.clipboard.writeText(txData)} text="Copy" />
           </div>
         </FormGroup>

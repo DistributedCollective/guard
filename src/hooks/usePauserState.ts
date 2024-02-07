@@ -26,10 +26,10 @@ export const usePauserState = (group: string) => {
     return () => sub.unsubscribe();
   }, [group]);
 
-  const getInitialValue = useCallback((method: string) => initialValue.find(item => item.method === method)?.value || false, [initialValue]);
-  const getValue = useCallback((method: string) => value.find(item => item.method === method)?.value || false, [value]);
-  const setValue = useCallback((method: string, value: boolean) => state.actions.setProposalValue(group, method, value), [group]);
-  const isDirty = useCallback((method: string) => getInitialValue(method) !== getValue(method), [getInitialValue, getValue]);
+  const getInitialValue = useCallback((uid: string) => initialValue.find(item => item.uid === uid)?.value || false, [initialValue]);
+  const getValue = useCallback((uid: string) => value.find(item => item.uid === uid)?.value || false, [value]);
+  const setValue = useCallback((uid: string, value: boolean) => state.actions.setProposalValue(group, uid, value), [group]);
+  const isDirty = useCallback((uid: string) => getInitialValue(uid) !== getValue(uid), [getInitialValue, getValue]);
 
   return {
     loading,

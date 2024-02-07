@@ -134,7 +134,7 @@ export const Sign = () => {
           </FormGroup>
           <FormGroup label="Transaction Content" className="mt-4 mb-4">
             <div className="flex justify-start space-x-4">
-              <Input readOnly value={data} />
+              <textarea readOnly value={data} className="w-full h-64 rounded px-3 leading-tight text-xs font-medium bg-gray-70/50 border border-gray-50 text-gray-30" />
               <Button onClick={() => navigator.clipboard.writeText(data)} text="Copy" />
             </div>
           </FormGroup>
